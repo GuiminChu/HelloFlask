@@ -1,7 +1,47 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
 from markupsafe import escape
+from urllib.parse import quote_plus as urlquote
+
+from sqlalchemy import text
 
 app = Flask(__name__)
+
+HOSTNAME = '192.168.1.252'
+PORT = 3306
+USERNAME = 'root'
+PASSWORD = 'Qn12345@'
+DATABASE = 'demo'
+# 因为密码里也有个@符号，所以先用 urlquote 编码一下
+CONN_INFO = f'mysql+pymysql://{USERNAME}:{urlquote(PASSWORD)}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4'
+
+# 配置数据库的连接信息
+app.config['SQLALCHEMY_DATABASE_URI'] = CONN_INFO
+# 关闭动态追踪修改的警告信息
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# 展示sql语句
+app.config['SQLALCHEMY_ECHO'] = True
+
+db = SQLAlchemy(app)
+
+
+class User(db.Model):
+    # 指定模型类对应的数据库表名。如果不指定，则默认为类名的小写形式。
+    __tablename__ = 'user'
+
+    id = db.Column('id', db.Integer, primary_key=True)
+    mobile = db.Column(db.String(20), doc='手机号')
+    password = db.Column(db.String(80), doc='密码')
+    email = db.Column(db.String(120), doc='邮箱')
+    is_delete = db.Column(db.Boolean, default=False, doc='是否删除')
+
+
+# 测试一下连接
+with app.app_context():
+    with db.engine.connect() as conn:
+        rs = conn.execute(text('select 1'))
+        print(rs.fetchone())
 
 
 @app.route('/')
