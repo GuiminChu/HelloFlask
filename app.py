@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 from markupsafe import escape
@@ -47,6 +47,15 @@ with app.app_context():
 @app.route('/')
 def hello_world():  # put application's code here
     return 'Hello, Flask!'
+
+
+@app.route('/json', methods=['GET'])
+def get_json():
+    data = {
+        "name": "python",
+        "age": 18
+    }
+    return jsonify(data)
 
 
 @app.route("/user/<username>")
