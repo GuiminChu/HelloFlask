@@ -6,6 +6,8 @@ from urllib.parse import quote_plus as urlquote
 
 from sqlalchemy import text
 
+from api.rp import RP
+
 app = Flask(__name__)
 
 HOSTNAME = '192.168.1.252'
@@ -38,10 +40,10 @@ class User(db.Model):
 
 
 # 测试一下连接
-with app.app_context():
-    with db.engine.connect() as conn:
-        rs = conn.execute(text('select 1'))
-        print(rs.fetchone())
+# with app.app_context():
+#     with db.engine.connect() as conn:
+#         rs = conn.execute(text('select 1'))
+#         print(rs.fetchone())
 
 
 @app.route('/')
@@ -55,7 +57,8 @@ def get_json():
         "name": "python",
         "age": 18
     }
-    return jsonify(data)
+    # return jsonify(data)
+    return jsonify(RP.status(True))
 
 
 @app.route("/user/<username>")
