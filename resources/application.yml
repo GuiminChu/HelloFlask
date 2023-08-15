@@ -5,3 +5,10 @@ redis:
   password: 123456@
   database: 14
   ssl: false
+
+mysql:
+  host: 223.99.197.190
+  port: 13306
+  database: qn_smart_home
+  username: root
+  password: Qn12345@

@@ -9,6 +9,33 @@ from utils.id_worker import idgen
 bp_user = Blueprint('user', __name__, url_prefix='/user')
 
 
+@bp_user.get('/page')
+def user_page():
+    page = request.args.get('current', 1, type=int)
+    per_page = request.args.get('size', 10, type=int)
+
+    select = db.select(UserModel).order_by(UserModel.create_time.desc())
+    page = db.paginate(select, page=page, per_page=per_page)
+
+    result = {
+        'records': [user for user in page.items],
+        "total": page.total,  # 总记录数
+        "size": page.per_page,  # 每页显示的记录数
+        "current": page.page,  # 当前页数
+        "pages": page.pages  # 总页数
+    }
+
+    return RP.data(result)
+    # return RP.data([user for user in users])
+
+
+@bp_user.get('/list')
+def user_list():
+    users = db.session.execute(db.select(UserModel).order_by(UserModel.create_time.desc())).scalars()
+    print(type(users))
+    return RP.data([user for user in users])
+
+
 @bp_user.get('/info/<int:user_id>')
 def user_info(user_id):
     user = db.session.query(UserModel).filter(UserModel.id == user_id).first()
