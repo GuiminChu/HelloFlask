@@ -8,6 +8,9 @@ from sqlalchemy import text
 
 from api.rp import RP
 
+from utils.factory import read_yaml
+from utils.redis_util import Redis
+
 app = Flask(__name__)
 
 HOSTNAME = '192.168.1.252'
@@ -26,6 +29,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
+
+conf = read_yaml('resources/application.yml')
+app.config.update(conf)
 
 
 class User(db.Model):
@@ -76,6 +82,12 @@ def show_path(subpath):
     return f'Path {escape(subpath)}'
     # http://127.0.0.1:5000/path/%3Cscript%3Ealert(%22bad%22)%3C/script%3E
     # return f'Path {subpath}'
+
+
+@app.route("/post/redis")
+def test_redis():
+    Redis.set('k', 'v')
+    return 'true'
 
 
 if __name__ == '__main__':

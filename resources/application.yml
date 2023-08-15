@@ -1,0 +1,7 @@
+redis:
+  ## redis 单机环境配置
+  host: 223.99.197.190
+  port: 16379
+  password: 123456@
+  database: 14
+  ssl: false
