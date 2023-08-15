@@ -11,8 +11,8 @@ class UserModel(db.Model):
     # 指定模型类对应的数据库表名。如果不指定，则默认为类名的小写形式。
     __tablename__ = 'user'
 
-    id: int = db.Column('id', db.Integer, primary_key=True)
-    account: str = db.Column(db.String(20), nullable=False, unique=True, doc='账号')
+    id: int = db.Column(db.Integer, primary_key=True)
+    account: str = db.Column(db.String(20), unique=True, nullable=False, doc='账号')
     password: str = db.Column(db.String(20), doc='密码')
     name: str = db.Column(db.String(20), doc='昵称')
     avatar: str = db.Column(db.String(200), doc='头像')

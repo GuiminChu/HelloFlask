@@ -1,3 +1,7 @@
+# https://www.bilibili.com/read/cv24640972
+# Flask-SQLAlchemy 3.0 版本 基本操作
+# https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/
+
 from flask import Blueprint, request
 from model.entity.user_model import UserModel
 from utils.exts import db
@@ -5,6 +9,7 @@ from api.rp import RP
 import json
 
 from utils.id_worker import idgen
+from utils.digest_util import DigestUtil
 
 bp_user = Blueprint('user', __name__, url_prefix='/user')
 
@@ -47,11 +52,27 @@ def user_info(user_id):
 
 @bp_user.post('/save')
 def save_user():
+    username = request.json.get("username", None)
+    if username is None or not isinstance(username, str):
+        return RP.fail("请输入正确的用户名")
+    if len(username) < 4 or len(username) > 20:
+        return RP.fail("用户名称长度不正确")
+
+    select = db.select(UserModel).where(UserModel.is_deleted == 0).where(UserModel.account == username)
+    users = db.session.execute(select).all()
+
+    if len(users) > 0:
+        return RP.fail('用户名重复')
+
     data = json.loads(request.get_data(as_text=True))
     print(data)
 
     new_user = UserModel(**data)
+
     new_user.id = idgen.next_id()
+
+    # 对密码进行加密
+    new_user.password = DigestUtil.sha256(data.get('password', '123456'))
     new_user.save()
     print(new_user.name)
     # new_user.name = "tom"

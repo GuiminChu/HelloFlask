@@ -1,5 +1,7 @@
 from flask import Flask, jsonify
 
+from flask_jwt_extended import JWTManager
+
 from urllib.parse import quote_plus as urlquote
 
 from utils.factory import read_yaml
@@ -7,12 +9,16 @@ from utils.redis_util import Redis
 from utils.exts import db, CustomJSONProvider
 
 from api.user_api import bp_user
+from api.auth_api import bp_auth
 
 app = Flask(__name__)
 app.json = CustomJSONProvider(app)
 
-HOSTNAME = '192.168.1.252'
-PORT = 3306
+app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
+jwt = JWTManager(app)
+
+HOSTNAME = '223.99.197.190'
+PORT = 13306
 USERNAME = 'root'
 PASSWORD = 'Qn12345@'
 DATABASE = 'qn_smart_home'
@@ -33,6 +39,7 @@ conf = read_yaml('resources/application.yml')
 app.config.update(conf)
 
 app.register_blueprint(bp_user)
+app.register_blueprint(bp_auth)
 
 
 # 测试一下连接
