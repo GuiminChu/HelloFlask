@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 
 from markupsafe import escape
 from urllib.parse import quote_plus as urlquote
@@ -10,6 +10,9 @@ from api.rp import RP
 
 from utils.factory import read_yaml
 from utils.redis_util import Redis
+from utils.exts import db
+
+from api.user_api import bp_user
 
 app = Flask(__name__)
 
@@ -17,7 +20,7 @@ HOSTNAME = '192.168.1.252'
 PORT = 3306
 USERNAME = 'root'
 PASSWORD = 'Qn12345@'
-DATABASE = 'demo'
+DATABASE = 'qn_smart_home'
 # 因为密码里也有个@符号，所以先用 urlquote 编码一下
 CONN_INFO = f'mysql+pymysql://{USERNAME}:{urlquote(PASSWORD)}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4'
 
@@ -28,21 +31,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # 展示sql语句
 app.config['SQLALCHEMY_ECHO'] = True
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+db.init_app(app)
 
 conf = read_yaml('resources/application.yml')
 app.config.update(conf)
 
+app.register_blueprint(bp_user)
 
-class User(db.Model):
-    # 指定模型类对应的数据库表名。如果不指定，则默认为类名的小写形式。
-    __tablename__ = 'user'
 
-    id = db.Column('id', db.Integer, primary_key=True)
-    mobile = db.Column(db.String(20), doc='手机号')
-    password = db.Column(db.String(80), doc='密码')
-    email = db.Column(db.String(120), doc='邮箱')
-    is_delete = db.Column(db.Boolean, default=False, doc='是否删除')
+
 
 
 # 测试一下连接

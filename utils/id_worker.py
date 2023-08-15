@@ -1,6 +1,6 @@
 # 导入包
 # https://github.com/yitter/IdGenerator
-from id_generator import options, generator
+from utils.id_generator import options, generator
 
 # 声明id生成器参数，需要自己构建一个worker_id
 options = options.IdGeneratorOptions(worker_id=23)
