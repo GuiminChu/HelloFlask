@@ -1,8 +1,5 @@
-from flask import Flask, jsonify
-
+from flask import Flask
 from flask_jwt_extended import JWTManager
-
-from urllib.parse import quote_plus as urlquote
 
 from utils.factory import read_yaml
 from utils.redis_util import Redis
@@ -11,22 +8,17 @@ from utils.exts import db, CustomJSONProvider
 from api.user_api import bp_user
 from api.auth_api import bp_auth
 
+from config import logger
+from config import SQLALCHEMY_DATABASE_URI
+
 app = Flask(__name__)
 app.json = CustomJSONProvider(app)
 
 app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
 jwt = JWTManager(app)
 
-HOSTNAME = '223.99.197.190'
-PORT = 13306
-USERNAME = 'root'
-PASSWORD = 'Qn12345@'
-DATABASE = 'qn_smart_home'
-# 因为密码里也有个@符号，所以先用 urlquote 编码一下
-CONN_INFO = f'mysql+pymysql://{USERNAME}:{urlquote(PASSWORD)}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4'
-
 # 配置数据库的连接信息
-app.config['SQLALCHEMY_DATABASE_URI'] = CONN_INFO
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 # 关闭动态追踪修改的警告信息
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # 展示sql语句
@@ -51,14 +43,17 @@ app.register_blueprint(bp_auth)
 
 @app.route('/')
 def hello_world():  # put application's code here
+    logger.info('Hello, Flask!')
     return 'Hello, Flask!'
 
 
 @app.route("/post/redis")
 def test_redis():
     Redis.set('k', 'v')
+
     return 'true'
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
+    # app.run(debug=True)
