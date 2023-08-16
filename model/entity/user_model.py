@@ -8,6 +8,10 @@ from dataclasses import dataclass
 
 @dataclass
 class UserModel(db.Model):
+    """
+    用户表
+    """
+
     # 指定模型类对应的数据库表名。如果不指定，则默认为类名的小写形式。
     __tablename__ = 'user'
 
@@ -26,3 +30,11 @@ class UserModel(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    @classmethod
+    def from_dict(cls, dictionary):
+        instance = cls()
+        for key, value in dictionary.items():
+            if hasattr(instance, key):
+                setattr(instance, key, value)
+        return instance

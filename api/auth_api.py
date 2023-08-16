@@ -5,7 +5,7 @@ from utils.exts import db
 from utils.digest_util import DigestUtil
 from model.entity.user_model import UserModel
 
-from api.rp import RP
+from model.rp import RP
 
 bp_auth = Blueprint('oauth', __name__, url_prefix='/oauth')
 

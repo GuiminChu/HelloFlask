@@ -7,6 +7,8 @@ from utils.exts import db, CustomJSONProvider
 
 from api.user_api import bp_user
 from api.auth_api import bp_auth
+from api.device_model_api import bp_device_model
+from api.device_switch_api import bp_device_switch
 
 from config import logger
 from config import SQLALCHEMY_DATABASE_URI
@@ -32,6 +34,8 @@ app.config.update(conf)
 
 app.register_blueprint(bp_user)
 app.register_blueprint(bp_auth)
+app.register_blueprint(bp_device_model)
+app.register_blueprint(bp_device_switch)
 
 
 # 测试一下连接

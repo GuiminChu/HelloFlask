@@ -5,7 +5,7 @@
 from flask import Blueprint, request
 from model.entity.user_model import UserModel
 from utils.exts import db
-from api.rp import RP
+from model.rp import RP
 import json
 
 from utils.id_worker import idgen
@@ -64,20 +64,18 @@ def save_user():
     if len(users) > 0:
         return RP.fail('用户名重复')
 
-    data = json.loads(request.get_data(as_text=True))
-    print(data)
+    request_body = json.loads(request.get_data(as_text=True))
+    print(request_body)
 
-    new_user = UserModel(**data)
+    new_user = UserModel.from_dict(request_body)
 
     new_user.id = idgen.next_id()
 
+    new_user.account = username
     # 对密码进行加密
-    new_user.password = DigestUtil.sha256(data.get('password', '123456'))
+    new_user.password = DigestUtil.sha256(request_body.get('password', '123456'))
     new_user.save()
     print(new_user.name)
-    # new_user.name = "tom"
-    # db.session.add(new_user)
-    # db.session.commit()
     return RP.data(new_user)
 
 
