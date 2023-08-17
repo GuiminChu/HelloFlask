@@ -2,9 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - '*'
 
 jobs:
 
@@ -19,14 +18,14 @@ jobs:
     - name: Login to Aliyun Container Registry (ACR)
       uses: aliyun/acr-login@v1 # 使用阿里云镜像服务action
       with:
-        login-server: registry.cn-shanghai.aliyuncs.com # 务必正确填写镜像容器服务的登录地址
-        region-id: cn-shanghai # 务必正确填写镜像容器服务的登录地址
+        login-server: registry.cn-shanghai.aliyuncs.com # 镜像容器服务的登录地址
+        region-id: cn-shanghai
         username: "${{ secrets.ALI_REGISTRY_USERNAME }}" # 引用GitHub repo设置的镜像容器服务用户名
         password: "${{ secrets.ALI_REGISTRY_PASSWORD }}" # 引用GitHub repo设置的镜像容器服务密码
     
     - name: Build the Docker image
       env:
-        IMAGE_TAG: ${{ github.sha }}
+        IMAGE_TAG: ${{ github.ref }} # 使用 GitHub 提供的标签名称作为镜像标签
       run: |
         docker build --file Dockerfile --tag registry.cn-shanghai.aliyuncs.com/qn-open/hello-flask:${IMAGE_TAG} . 
         docker push registry.cn-shanghai.aliyuncs.com/qn-open/hello-flask:${IMAGE_TAG}
