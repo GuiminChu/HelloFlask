@@ -6,6 +6,7 @@ from utils.redis_util import Redis
 from utils.exts import db, CustomJSONProvider
 from utils.mqtt import mqtt
 from utils.logger import logger
+from utils.jobs import scheduler, Config
 
 from api.user_api import bp_user
 from api.auth_api import bp_auth
@@ -22,10 +23,14 @@ app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
 jwt = JWTManager(app)
 
 app.config.from_object(config)
+app.config.from_object(Config)
 
 # db = SQLAlchemy(app)
 db.init_app(app)
 mqtt.init_app(app)
+
+scheduler.init_app(app)
+scheduler.start()
 
 conf = read_yaml('resources/application.yml')
 app.config.update(conf)
