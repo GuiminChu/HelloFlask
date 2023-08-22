@@ -12,6 +12,7 @@ from api.user_api import bp_user
 from api.auth_api import bp_auth
 from api.device_model_api import bp_device_model
 from api.device_switch_api import bp_device_switch
+from api.task_api import bp_task
 from api.test_api import bp_test
 
 import config
@@ -39,6 +40,7 @@ app.register_blueprint(bp_user)
 app.register_blueprint(bp_auth)
 app.register_blueprint(bp_device_model)
 app.register_blueprint(bp_device_switch)
+app.register_blueprint(bp_task)
 app.register_blueprint(bp_test)
 
 
