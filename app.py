@@ -1,9 +1,8 @@
 from flask import Flask
-from flask_jwt_extended import JWTManager
 
 from utils.factory import read_yaml
 from utils.redis_util import Redis
-from utils.exts import db, CustomJSONProvider
+from utils.exts import db, jwt, CustomJSONProvider
 from utils.mqtt import mqtt
 from utils.logger import logger
 from utils.jobs import scheduler, Config
@@ -20,15 +19,13 @@ import config
 app = Flask(__name__)
 app.json = CustomJSONProvider(app)
 
-app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
-jwt = JWTManager(app)
-
 app.config.from_object(config)
 app.config.from_object(Config)
 
 # db = SQLAlchemy(app)
 db.init_app(app)
-mqtt.init_app(app)
+jwt.init_app(app)
+# mqtt.init_app(app)
 
 scheduler.init_app(app)
 scheduler.start()
@@ -65,5 +62,5 @@ def test_redis():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8087)
     # app.run(debug=True)

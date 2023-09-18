@@ -1,4 +1,5 @@
 from urllib.parse import quote_plus as urlquote
+from datetime import timedelta
 
 MYSQL_HOSTNAME = '223.99.197.190'
 MYSQL_PORT = 13306
@@ -19,3 +20,9 @@ MQTT_USERNAME = 'MJKJ_OPEN'
 MQTT_PASSWORD = 'MJKJ_OPEN'
 MQTT_KEEPALIVE = 60
 MQTT_TLS_ENABLED = False
+
+JWT_SECRET_KEY = 'jwt-secret-string'
+# 设置普通JWT过期时间
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
+# 设置刷新JWT过期时间
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
