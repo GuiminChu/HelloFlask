@@ -20,7 +20,7 @@ class DeviceModel(db.Model):
     create_time: str = db.Column(db.DateTime, default=datetime.now, doc='创建时间')
     update_user: int = db.Column(db.Integer, doc='更新人')
     update_time: str = db.Column(db.DateTime, default=datetime.now, doc='更新时间')
-    is_deleted: int = db.Column(db.Boolean, default=False, doc='是否删除')
+    is_deleted: int = db.Column(db.Integer, default=0, doc='是否删除')
 
     def save(self):
         db.session.add(self)
@@ -58,11 +58,35 @@ class DeviceSwitch(db.Model):
     create_time: str = db.Column(db.DateTime, default=datetime.now, doc='创建时间')
     update_user: int = db.Column(db.Integer, doc='更新人')
     update_time: str = db.Column(db.DateTime, default=datetime.now, doc='更新时间')
-    is_deleted: int = db.Column(db.Boolean, default=False, doc='是否删除')
+    is_deleted: int = db.Column(db.Integer, default=0, doc='是否删除')
 
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def json(self):
+        return {"id": self.id, "username": self.username, "email": self.email }
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'modelId': self.model_id,
+            'deviceName': self.device_name,
+            'deviceSn': self.device_sn,
+            'transportType': self.transport_type,
+            'ip': self.ip,
+            'isOnline': self.is_online,
+            'wayCount': self.way_count,
+            'way1': self.way1,
+            'way2': self.way2,
+            'way3': self.way3,
+            'way4': self.way4,
+            'createUser': self.create_user,
+            'createTime': self.create_time,
+            'updateUser': self.update_user,
+            'updateTime': self.update_time,
+            'isDeleted': self.is_deleted,
+        }
 
     @classmethod
     def from_dict(cls, dictionary):

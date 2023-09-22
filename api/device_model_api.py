@@ -17,6 +17,10 @@ bp_device_model = Blueprint('deviceModel', __name__, url_prefix='/device_model')
 @bp_device_model.post('/save')
 @jwt_required()
 def save_device_model():
+    """
+    新增设备型号
+    """
+
     model_name = request.json.get("modelName", None)
     if model_name is None or not isinstance(model_name, str):
         return RP.fail("请输入正确的型号名称")
@@ -49,3 +53,15 @@ def save_device_model():
 
     new_model.save()
     return RP.data(new_model)
+
+
+@bp_device_model.get('/list')
+@jwt_required()
+def get_dm_list():
+    """
+    获取设备型号列表
+    """
+
+    ds_list = db.session.execute(db.select(DeviceModel).order_by(DeviceModel.create_time)).scalars()
+    print(type(ds_list))
+    return RP.data([ds for ds in ds_list])
